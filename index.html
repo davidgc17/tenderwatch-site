@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tender Watch | Monitorización de licitaciones sociosanitarias</title>
+    <meta name="description"
+        content="Tender Watch ayuda a empresas del sector sociosanitario a detectar licitaciones relevantes y cambios clave mediante un resumen diario laborable por email e inbox HTML." />
+    <style>
+        :root {
+            --bg-dark: #0b1f3a;
+            --bg-mid: #123a63;
+            --blue-main: #2563a6;
+            --blue-light: #4f8cc9;
+            --gray-soft: #d9e2ec;
+            --white-soft: #f8fafc;
+            --text-muted: #bdd0e3;
+            --card-bg: rgba(255, 255, 255, 0.06);
+            --card-border: rgba(255, 255, 255, 0.12);
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+            --radius: 18px;
+            --max-width: 1160px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #163b63 45%, var(--blue-main) 75%, var(--blue-light) 100%);
+            color: var(--white-soft);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+        }
+
+        .container {
+            width: min(92%, var(--max-width));
+            margin: 0 auto;
+        }
+
+        .site-header {
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(12px);
+            background: rgba(11, 31, 58, 0.65);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            z-index: 20;
+        }
+
+        .site-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+        }
+
+        .brand img {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
+        }
+
+        .nav {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            font-size: 0.96rem;
+            color: var(--text-muted);
+        }
+
+        .nav a:hover {
+            color: var(--white-soft);
+        }
+
+        .hero {
+            padding: 5.5rem 0 4rem;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.45rem 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 999px;
+            color: var(--gray-soft);
+            font-size: 0.9rem;
+            margin-bottom: 1.25rem;
+        }
+
+        h1 {
+            font-size: clamp(2.3rem, 5vw, 4.2rem);
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.15rem;
+            max-width: 12ch;
+        }
+
+        .hero p.lead {
+            font-size: 1.1rem;
+            color: var(--gray-soft);
+            max-width: 62ch;
+            margin-bottom: 1.8rem;
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem;
+            margin-bottom: 1.4rem;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-height: 48px;
+            padding: 0.85rem 1.2rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            font-weight: 600;
+            transition: 0.2s ease;
+        }
+
+        .button-primary {
+            background: var(--white-soft);
+            color: var(--bg-dark);
+            box-shadow: var(--shadow);
+        }
+
+        .button-primary:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+        .button-secondary {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.12);
+            color: var(--white-soft);
+        }
+
+        .button-secondary:hover {
+            background: rgba(255, 255, 255, 0.11);
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .hero-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .hero-card-top {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .hero-card-top img {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.35rem;
+        }
+
+        .hero-card h2 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .hero-card small {
+            color: var(--text-muted);
+        }
+
+        .mini-panel {
+            margin-top: 1.2rem;
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .mini-box {
+            background: rgba(7, 18, 35, 0.38);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 1rem;
+        }
+
+        .mini-box strong {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-size: 0.98rem;
+        }
+
+        .mini-box span {
+            color: var(--text-muted);
+            font-size: 0.93rem;
+        }
+
+        section {
+            padding: 1.8rem 0;
+        }
+
+        .section-title {
+            font-size: clamp(1.6rem, 3vw, 2.4rem);
+            line-height: 1.1;
+            margin-bottom: 0.8rem;
+            letter-spacing: -0.02em;
+        }
+
+        .section-intro {
+            color: var(--gray-soft);
+            max-width: 68ch;
+            margin-bottom: 1.8rem;
+        }
+
+        .grid-2,
+        .grid-3 {
+            display: grid;
+            gap: 1.15rem;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius);
+            padding: 1.35rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .card h3 {
+            font-size: 1.08rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .card p,
+        .card li {
+            color: var(--gray-soft);
+            font-size: 0.98rem;
+        }
+
+        ul.clean-list {
+            list-style: none;
+            display: grid;
+            gap: 0.65rem;
+        }
+
+        ul.clean-list li::before {
+            content: "•";
+            color: var(--blue-light);
+            font-weight: 700;
+            margin-right: 0.55rem;
+        }
+
+        .steps {
+            counter-reset: steps;
+            display: grid;
+            gap: 1rem;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 4rem;
+            min-height: 3rem;
+        }
+
+        .step::before {
+            counter-increment: steps;
+            content: counter(steps);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            color: var(--white-soft);
+        }
+
+        .cta-block {
+            margin-top: 2.5rem;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.05));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 28px;
+            padding: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .cta-block p {
+            color: var(--gray-soft);
+            margin: 0.8rem 0 1.2rem;
+            max-width: 60ch;
+        }
+
+        footer {
+            padding: 2.5rem 0 3rem;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .footer-inner {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.4rem;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .contact-links a:hover {
+            color: var(--white-soft);
+        }
+
+        @media (max-width: 960px) {
+
+            .hero-grid,
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .hero {
+                padding-top: 4rem;
+            }
+
+            h1 {
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 560px) {
+            .site-header-inner {
+                padding: 0.85rem 0;
+            }
+
+            .hero-actions {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+
+            .cta-block {
+                padding: 1.4rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <div class="container site-header-inner">
+            <a href="#" class="brand">
+                <img src="TW.png" alt="Logo de Tender Watch" />
+                <span>Tender Watch</span>
+            </a>
+
+            <nav class="nav">
+                <a href="#para-quien">Para quién es</a>
+                <a href="#que-recibes">Qué recibes</a>
+                <a href="#piloto">Piloto</a>
+                <a href="#contacto">Contacto</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero-grid">
+                <div>
+                    <div class="eyebrow">Monitorización sociosanitaria · Piloto 2–4 semanas</div>
+
+                    <h1>Detecta licitaciones y cambios clave sin revisar múltiples fuentes manualmente.</h1>
+
+                    <p class="lead">
+                        Tender Watch ayuda a empresas del sector sociosanitario a identificar oportunidades
+                        públicas y cambios relevantes mediante un resumen diario laborable por email e inbox HTML.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a class="button button-primary"
+                            href="mailto:david@tenderwatch.es?subject=Solicitud%20de%20ejemplo%20Tender%20Watch">
+                            Solicitar ejemplo
+                        </a>
+                        <a class="button button-secondary" href="#piloto">
+                            Ver cómo funciona el piloto
+                        </a>
+                    </div>
+
+                    <div class="hero-meta">
+                        <span>Vertical sociosanitario</span>
+                        <span>·</span>
+                        <span>Enfoque conservador y revisable</span>
+                        <span>·</span>
+                        <span>Foco inicial en Andalucía</span>
+                    </div>
+                </div>
+
+                <aside class="hero-card">
+                    <div class="hero-card-top">
+                        <img src="TW.png" alt="Icono de Tender Watch" />
+                        <div>
+                            <h2>Tender Watch</h2>
+                            <small>Señal operativa, no ruido</small>
+                        </div>
+                    </div>
+
+                    <div class="mini-panel">
+                        <div class="mini-box">
+                            <strong>Nuevas oportunidades</strong>
+                            <span>Licitaciones relevantes del vertical definido para el piloto.</span>
+                        </div>
+                        <div class="mini-box">
+                            <strong>Cambios clave</strong>
+                            <span>Plazos, documentos y movimientos que merecen atención.</span>
+                        </div>
+                        <div class="mini-box">
+                            <strong>Entrega clara</strong>
+                            <span>Email + inbox HTML, con enlace oficial y criterio visible.</span>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <section id="para-quien">
+            <div class="container">
+                <h2 class="section-title">Pensado para empresas privadas del sector sociosanitario</h2>
+                <p class="section-intro">
+                    Tender Watch está orientado a organizaciones que quieran detectar oportunidades públicas
+                    relacionadas con ayuda a domicilio, teleasistencia, residencias y centros de día.
+                </p>
+
+                <div class="grid-2">
+                    <div class="card">
+                        <h3>Casos donde encaja mejor</h3>
+                        <ul class="clean-list">
+                            <li>Empresas que revisan licitaciones de forma manual.</li>
+                            <li>Equipos que necesitan una señal operativa diaria y fácil de revisar.</li>
+                            <li>Organizaciones que priorizan precisión y contexto antes que volumen.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Qué problema resuelve</h3>
+                        <p>
+                            Reduce el tiempo dedicado a revisar múltiples fuentes y ayuda a identificar antes
+                            licitaciones relevantes y cambios que merecen atención dentro del vertical acordado.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="que-recibes">
+            <div class="container">
+                <h2 class="section-title">Qué recibe el cliente durante el piloto</h2>
+                <p class="section-intro">
+                    Un resumen operativo pensado para ser revisado en pocos minutos, con foco en utilidad y
+                    trazabilidad.
+                </p>
+
+                <div class="grid-3">
+                    <div class="card">
+                        <h3>Nuevas licitaciones relevantes</h3>
+                        <p>Oportunidades detectadas dentro del alcance definido para el piloto.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Cambios clave</h3>
+                        <p>Plazos, documentos u otros movimientos que puedan alterar la oportunidad.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Prioridad básica</h3>
+                        <p>Señal organizada para facilitar una revisión rápida y accionable.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Enlace oficial</h3>
+                        <p>Cada ítem incluye referencia directa al expediente o publicación oficial.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Criterio visible</h3>
+                        <p>Contexto suficiente para entender por qué un ítem aparece en el resumen.</p>
+                    </div>
+
+                    <div class="card">
+                        <h3>Formato claro</h3>
+                        <p>Email + inbox HTML para una revisión ágil y operativa.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="piloto">
+            <div class="container">
+                <h2 class="section-title">Cómo funciona el piloto</h2>
+                <p class="section-intro">
+                    Un servicio piloto estrecho, bien delimitado y orientado a validar valor real antes de escalar
+                    alcance.
+                </p>
+
+                <div class="card">
+                    <div class="steps">
+                        <div class="step">
+                            <h3>Definimos el alcance</h3>
+                            <p>Se acuerda el vertical y el ámbito operativo del piloto, con foco inicial en Andalucía.
+                            </p>
+                        </div>
+
+                        <div class="step">
+                            <h3>Monitorizamos y filtramos</h3>
+                            <p>Tender Watch detecta oportunidades y cambios relevantes con un enfoque conservador.</p>
+                        </div>
+
+                        <div class="step">
+                            <h3>Entregamos la señal</h3>
+                            <p>Recibes un resumen diario laborable con los ítems más relevantes y sus enlaces oficiales.
+                            </p>
+                        </div>
+
+                        <div class="step">
+                            <h3>Evaluamos utilidad</h3>
+                            <p>Al finalizar el piloto, se revisa si la señal ha sido útil, accionable y fácil de
+                                consumir.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid-2" style="margin-top: 1.15rem;">
+                    <div class="card">
+                        <h3>Qué incluye</h3>
+                        <ul class="clean-list">
+                            <li>Piloto de 2 a 4 semanas.</li>
+                            <li>Resumen diario laborable.</li>
+                            <li>Monitorización del vertical sociosanitario acordado.</li>
+                            <li>Entrega por email + inbox HTML.</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h3>Qué no incluye</h3>
+                        <ul class="clean-list">
+                            <li>Panel web o acceso SaaS.</li>
+                            <li>Cobertura completa garantizada de cualquier vertical o territorio.</li>
+                            <li>Alertas en tiempo real.</li>
+                            <li>Preparación de ofertas o consultoría de presentación.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="cta-block">
+                    <h2 class="section-title" style="margin-bottom: 0;">Solicita un ejemplo real del resumen</h2>
+                    <p>
+                        El punto fuerte de Tender Watch no es prometer una plataforma abstracta, sino enseñar
+                        exactamente el tipo de señal que recibirías durante el piloto.
+                    </p>
+                    <a class="button button-primary"
+                        href="mailto:david@tenderwatch.es?subject=Quiero%20ver%20un%20ejemplo%20de%20Tender%20Watch">
+                        Pedir ejemplo
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer id="contacto">
+        <div class="container footer-inner">
+            <div>
+                <strong>Tender Watch</strong><br />
+                Monitorización de licitaciones sociosanitarias.
+            </div>
+
+            <div class="contact-links">
+                <a href="mailto:david@tenderwatch.es">david@tenderwatch.es</a>
+                <a href="mailto:info@tenderwatch.es">info@tenderwatch.es</a>
+                <a href="https://tenderwatch.es" target="_blank" rel="noopener noreferrer">tenderwatch.es</a>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>
